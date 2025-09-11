@@ -20,5 +20,15 @@ pipeline {
         }
       }
     }
+
+    stage('Docker Build and Push') {
+      steps {
+        withDockerRegistry([credentialsId: "docker-hub", url: ""]) {
+          sh 'printenv'
+          sh 'docker build -t dyset5/numeric-app-example:""$GIT_COMMIT"" .'
+          sh 'docker push dyset5/numeric-app-example:""$GIT_COMMIT""'
+        }
+      }
+    }
   }
 }
