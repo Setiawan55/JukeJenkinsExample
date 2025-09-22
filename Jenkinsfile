@@ -32,9 +32,21 @@ pipeline {
       }
     }
 
+    // stage('SonarQube - SAST') {
+    //   steps {
+    //     sh "mvn clean verify sonar:sonar -Dsonar.projectKey=rnd-application -Dsonar.projectName='rnd-application' -Dsonar.host.url=https://sq-juke.diset.my.id -Dsonar.token=sqp_579469c4b2e440ce6d43968dbf5625934e90d6fd"
+    //   }
+    // }
     stage('SonarQube - SAST') {
       steps {
-        sh "mvn clean verify sonar:sonar -Dsonar.projectKey=rnd-application -Dsonar.projectName='rnd-application' -Dsonar.host.url=https://sq-juke.diset.my.id -Dsonar.token=sqp_579469c4b2e440ce6d43968dbf5625934e90d6fd"
+        withSonarQubeEnv('SonarQube') {
+          sh "mvn clean verify sonar:sonar -Dsonar.projectKey=rnd-application -Dsonar.projectName='rnd-application' -Dsonar.host.url=https://sq-juke.diset.my.id -Dsonar.token=sqp_579469c4b2e440ce6d43968dbf5625934e90d6fd"
+        }
+        timeout(time: 2, unit: 'MINUTES') {
+          script {
+            waitForQualityGate abortPipeline: true
+          }
+        }
       }
     }
 
